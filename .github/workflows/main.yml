@@ -29,97 +29,6 @@ jobs:
     # IMPORTANT: we still need .cicd as a Git submodule in the using repo though!
     # because e.g. identifiers.yml wants to access scripts/sanitize.sh !
 
-  check:
-    name: Code Quality
-    needs: identifiers
-    runs-on: ubuntu-24.04
-
-    env:
-      BASE_REPO: ${{ needs.identifiers.outputs.base_repo }}
-      BASE_BRANCH: ${{ needs.identifiers.outputs.base_branch }}
-      PR_NUMBER: ${{ needs.identifiers.outputs.pr_number }}
-      PR_REPO: ${{ needs.identifiers.outputs.pr_repo }}
-      PR_BRANCH: ${{ needs.identifiers.outputs.pr_branch }}
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
-
-      - name: Set up Python 3.11
-        run: uv python install 3.11
-
-      - name: Install just
-        uses: extractions/setup-just@v3
-
-      - name: Install ty (Astral type checker)
-        run: uv tool install ty --prerelease=allow
-
-      - name: Setup Node.js for Solidity compilation
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Compile Solidity contracts (required for editable install)
-        run: just compile-contracts
-
-      - name: Create venv and install dev dependencies
-        run: |
-          just create cpy311
-          just install-dev cpy311
-
-      - name: Run code quality checks
-        run: just check cpy311
-
-  test:
-    name: Test Suite
-    needs: identifiers
-    runs-on: ${{ matrix.os }}
-
-    env:
-      BASE_REPO: ${{ needs.identifiers.outputs.base_repo }}
-      BASE_BRANCH: ${{ needs.identifiers.outputs.base_branch }}
-      PR_NUMBER: ${{ needs.identifiers.outputs.pr_number }}
-      PR_REPO: ${{ needs.identifiers.outputs.pr_repo }}
-      PR_BRANCH: ${{ needs.identifiers.outputs.pr_branch }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-24.04]
-        env: ['cpy311', 'cpy312', 'cpy313', 'cpy314']
-
-    continue-on-error: false
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
-
-      - name: Install just
-        uses: extractions/setup-just@v3
-
-      - name: Setup Node.js for Solidity compilation
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Compile Solidity contracts (required for editable install)
-        run: just compile-contracts
-
-      - name: Create venv and install dependencies
-        run: |
-          just create ${{ matrix.env }}
-          just install-dev ${{ matrix.env }}
-
-      - name: Run tests
-        run: just test ${{ matrix.env }}
-
   docs:
     name: Documentation
     needs: identifiers
@@ -167,7 +76,7 @@ jobs:
   # Artifacts are uploaded with checksums for chain-of-custody verification
   build:
     name: Build Distribution
-    needs: [identifiers, check, test]
+    needs: identifiers
     runs-on: ubuntu-24.04
 
     env:

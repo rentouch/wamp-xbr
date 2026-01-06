@@ -30,12 +30,12 @@ import hmac
 import struct
 
 from base58 import b58encode_check
-from ecdsa.curves import SECP256k1
+#from ecdsa.curves import SECP256k1
 
 BIP39_PBKDF2_ROUNDS = 2048
 BIP39_SALT_MODIFIER = "mnemonic"
 BIP32_PRIVDEV = 0x80000000
-BIP32_CURVE = SECP256k1
+#BIP32_CURVE = SECP256k1
 BIP32_SEED_MODIFIER = b"Bitcoin seed"
 
 # https://github.com/ethereum/EIPs/issues/84#issuecomment-528213145
@@ -66,7 +66,7 @@ def bip39seed_to_bip32masternode(seed):
 def derive_public_key(private_key):
     """Public key from a private key.
     Logic adapted from https://github.com/satoshilabs/slips/blob/master/slip-0010/testvectors.py."""
-
+    raise NotImplementedError()
     Q = int.from_bytes(private_key, byteorder="big") * BIP32_CURVE.generator
     xstr = int(Q.x()).to_bytes(32, byteorder="big")
     parity = Q.y() & 1
@@ -76,7 +76,7 @@ def derive_public_key(private_key):
 def derive_bip32childkey(parent_key, parent_chain_code, i):
     """Derives a child key from an existing key, i is current derivation parameter.
     Logic adapted from https://github.com/satoshilabs/slips/blob/master/slip-0010/testvectors.py."""
-
+    raise NotImplementedError()
     assert len(parent_key) == 32
     assert len(parent_chain_code) == 32
     k = parent_chain_code

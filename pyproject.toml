@@ -55,7 +55,6 @@ dependencies = [
     # the following is needed (at least) for BIP32/39 mnemonic processing
     "mnemonic>=0.19",
     "base58>=2.1.0",
-    "ecdsa>=0.16.1",
     "py-multihash>=2.0.1",
     # the following is needed for the WAMP/XBR IDL code generator
     "jinja2>=2.11.3",
