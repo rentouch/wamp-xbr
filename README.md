@@ -1,3 +1,24 @@
+------------------------------------------------------------------------
+
+## ⚠️ Custom Build: XBR without ECDSA
+
+> **ATTENTION:** This section describes how to build a custom version of XBR without ECDSA dependencies.
+>
+> **Background:** 
+> This is used for Crossbar wihtout ECDSA, to make scanners happy due to https://github.com/tlsfuzzer/python-ecdsa/security/advisories/GHSA-wj6h-64fc-37mp
+>
+> **Build Instructions:**
+>
+> - Change source, make a PR in github -> triggers CI and builds artifacts (which contain wheel)
+> - Download artifacts from github
+> - Create a new release on github and upload the wheel as content for the artifact
+> - Update crossbars dependencies by: ´uv add "xbr @ https://github.com/rentouch/wamp-xbr/releases/download/without-ecdsa/xbr-25.12.2-py3-none-any.whl"´
+>
+> **Info:**
+> 
+> Do not try to use this repo directly as a py-dependency as it requires a special build. Thus, build the wheel first, then use it.
+
+
 # wamp-xbr
 
 [![PyPI](https://img.shields.io/pypi/v/xbr.svg)](https://pypi.python.org/pypi/xbr)
